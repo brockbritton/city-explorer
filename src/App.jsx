@@ -6,8 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const LOCATION_IQ_API_KEY = import.meta.env.VITE_LOC_IQ_API_KEY;
 
 function App() {
-  const [responseData, setResponseData] = useState({});
+  const [cityResponseData, setCityResponseData] = useState({});
+  const [weatherResponseData, setWeatherResponseData] = useState({});
   const [city, setCity] = useState('');
+  const [error, setError] = useState(null);
 
   const handleInput = (event) => {
     let value = event.target.value;
@@ -21,15 +23,18 @@ function App() {
   }
   const getLocation = async (cityName) => {
     try {
-      let response = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
-      console.log(response)
-      setResponseData(response.data[0]);
+      let cityResponse = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
+      let weatherResponse = await axios.get(`http://localhost:3000/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
+      
+      setCityResponseData(cityResponse.data[0]);
+      setWeatherResponseData(weatherResponse);
+      setError(null)
     } catch(error) {
       console.log(error)
-      alert(`${error}. Please try again.`)
+      setError('Unable to get city data. Please check your city input.')
     }
-    
   }
+
 
   return (
     <>
@@ -42,13 +47,29 @@ function App() {
           </button>
         </form>
       </header>
-      <div className="display-card">
-        {responseData.display_name
-        ? <ol>
-            <h3>{responseData.display_name}</h3>
-            <p>{`Latitude: ${responseData.lat}, Longitude: ${responseData.lon}`}</p>
-            <img src={`https://maps.locationiq.com/v3/staticmap?key=${LOCATION_IQ_API_KEY}&center=${responseData.lat},${responseData.lon}&zoom=12`}/>
-          </ol>
+      {error ? <p id='error-display'> {error} </p> : <br/>}
+      <div className="display-city">
+        {cityResponseData.display_name
+        ? <div>
+          <div>
+            <h3>{cityResponseData.display_name}</h3>
+            <p>{`Latitude: ${cityResponseData.lat}, Longitude: ${cityResponseData.lon}`}</p>
+            <img src={`https://maps.locationiq.com/v3/staticmap?key=${LOCATION_IQ_API_KEY}&center=${cityResponseData.lat},${cityResponseData.lon}&zoom=12`}/>
+          </div>
+          <div>
+            <h3> Weather </h3>
+            {weatherResponseData.data.map((day, idx) => {
+              {console.log(day)}
+              return (
+                <div key={idx}>
+                  <p> {day.date} </p>
+                  <p> {day.description} </p>
+                </div>
+              
+              )
+            })};
+          </div>
+        </div>
         : <p> Please Click the Explore Button </p>
         }
       </div>
