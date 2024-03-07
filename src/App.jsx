@@ -23,7 +23,7 @@ function App() {
   const getLocation = async (cityName) => {
     try {
       let cityResponse = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
-      let weatherResponse = await axios.get(`http://localhost:3000/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
+      let weatherResponse = await axios.get(`http://localhost:3001/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
       setCityResponseData(cityResponse.data[0]);
       setWeatherResponseData(weatherResponse);
       setError(null)
@@ -55,11 +55,10 @@ function App() {
             <img src={`https://maps.locationiq.com/v3/staticmap?key=${LOCATION_IQ_API_KEY}&center=${cityResponseData.lat},${cityResponseData.lon}&zoom=12`}/>
           </div>
           <div>
-            <h3 style={{ padding: '20px' }}> Weather </h3>
+            <h3 style={{ padding: '20px' }}> Weather Forecast </h3>
             <Container>
               <Row xs={1} sm={2} md={3} lg={3}>
                 {weatherResponseData.data.map((day, idx) => {
-                  // {console.log(day)}
                   return (
                     <Card key={idx} style={{ padding: '20px' }}>
                       <Card.Body>
