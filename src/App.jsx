@@ -25,10 +25,9 @@ function App() {
     try {
       let cityResponse = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
       setCityResponseData(cityResponse.data[0]);
-      //https://city-explorer-api-4a6z.onrender.com
-      let weatherResponse = await axios.get(`http://localhost:3000/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
+      let weatherResponse = await axios.get(`https://city-explorer-api-4a6z.onrender.com/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
       setWeatherResponseData(weatherResponse);
-      let moviesResponse = await axios.get(`http://localhost:3000/movies/${cityName}`)
+      let moviesResponse = await axios.get(`https://city-explorer-api-4a6z.onrender.com/movies/${cityName}`)
       setMoviesResponseData(moviesResponse);
       setError(null);
     } catch(error) {
