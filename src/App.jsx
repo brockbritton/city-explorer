@@ -9,6 +9,7 @@ const LOCATION_IQ_API_KEY = import.meta.env.VITE_LOC_IQ_API_KEY;
 function App() {
   const [cityResponseData, setCityResponseData] = useState({});
   const [weatherResponseData, setWeatherResponseData] = useState({});
+  const [moviesResponseData, setMoviesResponseData] = useState({})
   const [city, setCity] = useState('');
   const [error, setError] = useState(null);
 
@@ -18,18 +19,21 @@ function App() {
   }
   const handleSubmit = (event) => {
     event.preventDefault();
-    getLocation(city);
+    getLocationInfo(city);
   }
-  const getLocation = async (cityName) => {
+  const getLocationInfo = async (cityName) => {
     try {
       let cityResponse = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
-      let weatherResponse = await axios.get(`http://localhost:3001/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
       setCityResponseData(cityResponse.data[0]);
+      //https://city-explorer-api-4a6z.onrender.com
+      let weatherResponse = await axios.get(`http://localhost:3000/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
       setWeatherResponseData(weatherResponse);
-      setError(null)
+      let moviesResponse = await axios.get(`http://localhost:3000/movies/${cityName}`)
+      setMoviesResponseData(moviesResponse);
+      setError(null);
     } catch(error) {
-      console.log(error)
-      setError('Unable to get city data. Please check your city input.')
+      console.log(error);
+      setError('Unable to get city data. Please check your city input.');
     }
   }
 
@@ -58,7 +62,7 @@ function App() {
             <h3 style={{ padding: '20px' }}> Weather Forecast </h3>
             <Container>
               <Row xs={1} sm={2} md={3} lg={3}>
-                {weatherResponseData.data.map((day, idx) => {
+                {weatherResponseData.data?.map((day, idx) => {
                   return (
                     <Card key={idx} style={{ padding: '20px' }}>
                       <Card.Body>
@@ -72,6 +76,20 @@ function App() {
                 })};
               </Row>
             </Container>
+          </div>
+          <div>
+            <h3 style={{ padding: '20px' }}> Movies </h3>
+            {moviesResponseData.data?.map((movie, idx) => {
+              return (
+                <Card key={idx} style={{ padding: '20px' }}>
+                  <Card.Body>
+                    <Card.Title>{movie.title}</Card.Title>
+                    <Card.Text>Release Date: {movie.date}</Card.Text>
+                    <Card.Text>{movie.description}</Card.Text>
+                  </Card.Body>
+                </Card>
+              )
+            })}
           </div>
         </div>
         : <p> Please Click the Explore Button </p>
