@@ -62,7 +62,7 @@ function App() {
             <h3 style={{ padding: '20px' }}> Weather Forecast </h3>
             <Container>
               <Row xs={1} sm={2} md={3} lg={3}>
-                {weatherResponseData.data?.map((day, idx) => {
+                {weatherResponseData?.data?.map((day, idx) => {
                   return (
                     <Card key={idx} style={{ padding: '20px' }}>
                       <Card.Body>
@@ -79,7 +79,7 @@ function App() {
           </div>
           <div>
             <h3 style={{ padding: '20px' }}> Movies </h3>
-            {moviesResponseData.data?.map((movie, idx) => {
+            {moviesResponseData?.data?.map((movie, idx) => {
               return (
                 <Card key={idx} style={{ padding: '20px' }}>
                   <Card.Body>
