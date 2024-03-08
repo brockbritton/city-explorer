@@ -24,6 +24,7 @@ function App() {
     try {
       let cityResponse = await axios.get(`https://us1.locationiq.com/v1/search.php?key=${LOCATION_IQ_API_KEY}&q=${cityName}&format=json`);
       setCityResponseData(cityResponse.data[0]);
+      console.log('Current API Server: ', SERVER_LINK)
       let weatherResponse = await axios.get(`${SERVER_LINK}/weather/${cityResponse.data[0].lat}_${cityResponse.data[0].lon}`);
       let moviesResponse = await axios.get(`${SERVER_LINK}/movies/${cityName}`)
       setWeatherResponseData(weatherResponse);
